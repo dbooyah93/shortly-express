@@ -5,11 +5,15 @@ const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
+const cookieParser = require('./middleware/cookieParser');
+
+console.log('cookieParser: ', cookieParser);
 
 const app = express();
 
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
+app.use(cookieParser);
 app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -92,26 +96,17 @@ app.post('/login',
   (req, res, next) => {
     let info = req.body;
     const {username, password} = info;
-    let tmp = models.Users.compare({info, next} /** user.pass */ );
-    console.log(tmp);
-    // .then(bool => {
-    //   if ( bool ) {
-    //     res.send('ok');
-    //   } else {
-    //     res.send('NOOOOO');
-    //   }
-    // });
-    // res.send('OK');
-  // var url = req.body.url;
-  // if (!models.Links.isValidUrl(url)) {
-  //   // send back a 404 if link is not valid
-  //   return res.sendStatus(404);
+    models.Users.get( username )
+      .then( results => models.Users.compare( password, results.password, results.salt ) )
+      .then( bool => {
+        if ( bool ) {
+          res.redirect('/create');
+        } else {
+          res.send('NOOOOOO');
+        }
+      });
   });
-  /**
-     compare(attempted, password, salt) {
-    return utils.compareHash(attempted, password, salt);
-  }
-   */
+
 
 app.post('/signup',
   (req, res, next) => {
