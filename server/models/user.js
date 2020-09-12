@@ -20,7 +20,27 @@ class Users extends Model {
    * @returns {boolean} A boolean indicating if the attempted password was correct.
    */
   compare(attempted, password, salt) {
-    return utils.compareHash(attempted, password, salt);
+    const username = attempted.info.username;
+    const attemptPass = attempted.info.password;
+    const next = attempted.next;
+    // console.log(next);
+    // console.log(next());
+    let auth = super.get.call( this, { username: username } );// object
+    return utils.compareHash( attemptPass, auth.password, auth.salt );// bool
+
+    // super.get.call( this, { username: username } )
+    //   .then(comp => utils.compareHash( atemptPass, comp.password, comp.salt ) )
+    //   .then(bool => {
+    //     console.log('--->', bool);
+    //     if (bool) {
+    //       model.getAll();
+    //       next();
+    //     } else {
+    //       next('NO');
+    //     }
+    //   });
+    // atemptPass, comp.password, comp.salt
+    // return utils.compareHash(attempted, db.password, db.salt);
   }
 
   /**

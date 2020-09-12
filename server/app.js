@@ -17,17 +17,27 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 
 
-app.get('/', 
+app.get('/',
 (req, res) => {
   res.render('index');
 });
 
-app.get('/create', 
+app.get('/login',
+(req, res) => {
+  res.render('login');
+});
+
+app.get('/signup',
+(req, res) => {
+  res.render('signup');
+});
+
+app.get('/create',
 (req, res) => {
   res.render('index');
 });
 
-app.get('/links', 
+app.get('/links',
 (req, res, next) => {
   models.Links.getAll()
     .then(links => {
@@ -38,7 +48,7 @@ app.get('/links',
     });
 });
 
-app.post('/links', 
+app.post('/links',
 (req, res, next) => {
   var url = req.body.url;
   if (!models.Links.isValidUrl(url)) {
@@ -78,7 +88,41 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
+app.post('/login',
+  (req, res, next) => {
+    let info = req.body;
+    const {username, password} = info;
+    let tmp = models.Users.compare({info, next} /** user.pass */ );
+    console.log(tmp);
+    // .then(bool => {
+    //   if ( bool ) {
+    //     res.send('ok');
+    //   } else {
+    //     res.send('NOOOOO');
+    //   }
+    // });
+    // res.send('OK');
+  // var url = req.body.url;
+  // if (!models.Links.isValidUrl(url)) {
+  //   // send back a 404 if link is not valid
+  //   return res.sendStatus(404);
+  });
+  /**
+     compare(attempted, password, salt) {
+    return utils.compareHash(attempted, password, salt);
+  }
+   */
 
+app.post('/signup',
+  (req, res, next) => {
+    let info = req.body;
+    models.Users.create(info);
+    res.send('OK');
+  // var url = req.body.url;
+  // if (!models.Links.isValidUrl(url)) {
+  //   // send back a 404 if link is not valid
+  //   return res.sendStatus(404);
+});
 
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail
