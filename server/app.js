@@ -14,6 +14,7 @@ const app = express();
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
 app.use(cookieParser);
+app.use(Auth.createSession);
 app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,6 +24,31 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/',
 (req, res) => {
+
+  /**
+ * get req.cookie
+ * check for session id !== undefined
+ * if ( undefined ) {
+ *    generate a session with a unique hash
+ *    store hash in database
+ *    set session id prop on clients computer // look this up in express <-----
+ *      // probably create headder === set cookie then set this new session hash to cookie header
+ * } else {
+ *    extract session id from req.cookie
+ *    check against sessions table in database
+ *    if ( !valid ) {
+ *      redirect to '/signup'
+ *    } else {
+ *      // TO_DO;
+ *    }
+ * }
+ */
+
+
+
+  // console.log(req.cookie);
+  // console.log(utils.createRandom32String());
+
   res.render('index');
 });
 
